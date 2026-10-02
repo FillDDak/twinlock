@@ -1,0 +1,10 @@
+{
+  "name": "twinlock-screenshot-helper",
+  "displayName": "Twinlock screenshot helper (dev only)",
+  "version": "0.0.0",
+  "publisher": "twinlock-dev",
+  "private": true,
+  "engines": { "vscode": "^1.85.0" },
+  "activationEvents": ["onStartupFinished"],
+  "main": "./extension.js"
+}

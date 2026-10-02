@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        vscode: [stable, 1.85.0]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run test:unit
+      - name: Configure git identity for test fixtures
+        run: |
+          git config --global user.email "ci@example.com"
+          git config --global user.name "CI"
+      - name: Integration tests (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run test:integration
+        env:
+          TWINLOCK_VSCODE_VERSION: ${{ matrix.vscode }}
+      - name: Integration tests
+        if: runner.os != 'Linux'
+        run: npm run test:integration
+        env:
+          TWINLOCK_VSCODE_VERSION: ${{ matrix.vscode }}
+
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: node scripts/check-release.mjs --allow-placeholders
+      - run: npx vsce package --out twinlock.vsix
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twinlock-vsix
+          path: twinlock.vsix

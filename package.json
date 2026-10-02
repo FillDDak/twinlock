@@ -1,0 +1,479 @@
+{
+  "name": "twinlock",
+  "displayName": "Twinlock — Keep Linked Code in Sync",
+  "description": "Real-time LINT.IfChange / LINT.ThenChange for VS Code: link code that must change together across files and languages, and see the moment one side drifts.",
+  "version": "1.0.0",
+  "publisher": "your-publisher-id",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#1B1F3B",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FillDDak/twinlock.git"
+  },
+  "bugs": {
+    "url": "https://github.com/FillDDak/twinlock/issues"
+  },
+  "homepage": "https://github.com/FillDDak/twinlock#readme",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Linters",
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "IfChange",
+    "ThenChange",
+    "LINT.IfChange",
+    "ifttt",
+    "sync",
+    "linked code",
+    "drift",
+    "consistency",
+    "code review",
+    "monorepo"
+  ],
+  "main": "./dist/extension.js",
+  "extensionKind": [
+    "workspace"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "In Restricted Mode Twinlock does not run git. Changes are compared against file contents at the start of the session instead."
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "Twinlock needs local file and git access."
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "twinlock.linkSelection",
+        "title": "Link Selection…",
+        "category": "Twinlock",
+        "icon": "$(link)"
+      },
+      {
+        "command": "twinlock.linkSelectionToFile",
+        "title": "Link Selection to File…",
+        "category": "Twinlock",
+        "icon": "$(file-symlink-file)"
+      },
+      {
+        "command": "twinlock.cancelLink",
+        "title": "Cancel Linking",
+        "category": "Twinlock"
+      },
+      {
+        "command": "twinlock.acknowledge",
+        "title": "Acknowledge: No Linked Change Needed",
+        "category": "Twinlock",
+        "icon": "$(check)"
+      },
+      {
+        "command": "twinlock.unacknowledge",
+        "title": "Undo Acknowledgement",
+        "category": "Twinlock",
+        "icon": "$(discard)"
+      },
+      {
+        "command": "twinlock.clearAcknowledgements",
+        "title": "Clear All Acknowledgements",
+        "category": "Twinlock"
+      },
+      {
+        "command": "twinlock.showChanges",
+        "title": "Show Changes Since Baseline",
+        "category": "Twinlock",
+        "icon": "$(diff)"
+      },
+      {
+        "command": "twinlock.nextPending",
+        "title": "Go to Next Code to Sync",
+        "category": "Twinlock",
+        "icon": "$(arrow-down)"
+      },
+      {
+        "command": "twinlock.previousPending",
+        "title": "Go to Previous Code to Sync",
+        "category": "Twinlock",
+        "icon": "$(arrow-up)"
+      },
+      {
+        "command": "twinlock.refresh",
+        "title": "Rescan Workspace",
+        "category": "Twinlock",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "twinlock.resetSessionBaseline",
+        "title": "Reset Session Baseline (Files Without Git)",
+        "category": "Twinlock"
+      },
+      {
+        "command": "twinlock.focus",
+        "title": "Show Linked Changes",
+        "category": "Twinlock"
+      },
+      {
+        "command": "twinlock.showLog",
+        "title": "Show Log",
+        "category": "Twinlock"
+      },
+      {
+        "command": "twinlock.openLocation",
+        "title": "Open",
+        "category": "Twinlock"
+      },
+      {
+        "command": "twinlock.pickTarget",
+        "title": "Open Linked Target",
+        "category": "Twinlock"
+      },
+      {
+        "command": "twinlock.showReferences",
+        "title": "Show References",
+        "category": "Twinlock"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "twinlock.linkSelection",
+        "key": "ctrl+alt+l",
+        "mac": "cmd+alt+l",
+        "when": "editorTextFocus && !editorReadonly"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "twinlock.openLocation",
+          "when": "false"
+        },
+        {
+          "command": "twinlock.pickTarget",
+          "when": "false"
+        },
+        {
+          "command": "twinlock.showReferences",
+          "when": "false"
+        },
+        {
+          "command": "twinlock.cancelLink",
+          "when": "twinlock.linking"
+        },
+        {
+          "command": "twinlock.linkSelection",
+          "when": "editorIsOpen"
+        },
+        {
+          "command": "twinlock.linkSelectionToFile",
+          "when": "editorHasSelection"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "twinlock.linkSelection",
+          "when": "editorHasSelection && !twinlock.linking && resourceScheme == file",
+          "group": "9_twinlock@1"
+        },
+        {
+          "command": "twinlock.linkSelection",
+          "when": "twinlock.linking && resourceScheme == file",
+          "group": "9_twinlock@1"
+        },
+        {
+          "command": "twinlock.linkSelectionToFile",
+          "when": "editorHasSelection && !twinlock.linking && resourceScheme == file",
+          "group": "9_twinlock@2"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "twinlock.previousPending",
+          "when": "view == twinlock.links",
+          "group": "navigation@1"
+        },
+        {
+          "command": "twinlock.nextPending",
+          "when": "view == twinlock.links",
+          "group": "navigation@2"
+        },
+        {
+          "command": "twinlock.refresh",
+          "when": "view == twinlock.links",
+          "group": "navigation@3"
+        },
+        {
+          "command": "twinlock.clearAcknowledgements",
+          "when": "view == twinlock.links",
+          "group": "1_more"
+        },
+        {
+          "command": "twinlock.resetSessionBaseline",
+          "when": "view == twinlock.links",
+          "group": "1_more"
+        },
+        {
+          "command": "twinlock.showLog",
+          "when": "view == twinlock.links",
+          "group": "1_more"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "twinlock.acknowledge",
+          "when": "view == twinlock.links && viewItem == block-pending",
+          "group": "inline@1"
+        },
+        {
+          "command": "twinlock.unacknowledge",
+          "when": "view == twinlock.links && viewItem == block-acknowledged",
+          "group": "inline@1"
+        },
+        {
+          "command": "twinlock.showChanges",
+          "when": "view == twinlock.links && viewItem =~ /^block-(pending|synced|acknowledged)$/",
+          "group": "inline@2"
+        }
+      ]
+    },
+    "views": {
+      "scm": [
+        {
+          "id": "twinlock.links",
+          "name": "Linked Changes",
+          "icon": "media/view-icon.svg",
+          "contextualTitle": "Twinlock"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "twinlock.links",
+        "contents": "No linked code yet.\n\nMark code that must change together — a constant and its documentation, an enum in two languages, an encoder and its decoder — and Twinlock warns you the moment one side changes without the other.\n\nSelect some lines and run:\n[$(link) Link Selection…](command:twinlock.linkSelection)\n\nor write the directives yourself:\n`// LINT.IfChange(name)` … `// LINT.ThenChange(//path/to/file:name)`\n\n[Rescan Workspace](command:twinlock.refresh)"
+      }
+    ],
+    "configuration": {
+      "title": "Twinlock",
+      "properties": {
+        "twinlock.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Twinlock."
+        },
+        "twinlock.baseRef": {
+          "type": "string",
+          "default": "HEAD",
+          "markdownDescription": "Git revision to compare against. `HEAD` checks your uncommitted work. Use e.g. `origin/main` to check everything on your branch before opening a pull request (see `#twinlock.useMergeBase#`)."
+        },
+        "twinlock.useMergeBase": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "When `#twinlock.baseRef#` is not `HEAD`, compare against the merge base of `HEAD` and that ref (like a pull request diff) instead of the ref itself."
+        },
+        "twinlock.pendingSeverity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning",
+            "information",
+            "hint"
+          ],
+          "default": "warning",
+          "description": "Severity of the problem reported when linked code was not updated."
+        },
+        "twinlock.codeLens.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show link status above every LINT.IfChange line."
+        },
+        "twinlock.decorations.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Highlight blocks that need attention and show gutter icons."
+        },
+        "twinlock.statusBar.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the Twinlock summary in the status bar."
+        },
+        "twinlock.git.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use git to find the baseline. When disabled (or outside a repository), changes are compared against the content seen when the session started."
+        },
+        "twinlock.directiveNamespace": {
+          "type": "string",
+          "default": "LINT",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+          "markdownDescription": "Prefix of the directives. The default `LINT` matches Google's `LINT.IfChange` / `LINT.ThenChange` and tools such as ifttt-lint."
+        },
+        "twinlock.resolveBarePathsFromRoot": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "When a target like `src/a.ts` (no `//`, `./` or `../`) is not found next to the referencing file, also look for it relative to the project root."
+        },
+        "twinlock.exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/node_modules/**",
+            "**/.git/**",
+            "**/bower_components/**",
+            "**/.venv/**",
+            "**/venv/**",
+            "**/__pycache__/**",
+            "**/.vscode-test/**",
+            "**/.next/**",
+            "**/.nuxt/**",
+            "**/.turbo/**",
+            "**/coverage/**"
+          ],
+          "description": "Glob patterns of files that are never scanned for directives."
+        },
+        "twinlock.maxFiles": {
+          "type": "number",
+          "default": 50000,
+          "minimum": 1,
+          "description": "Maximum number of files to scan for directives."
+        },
+        "twinlock.maxFileSizeKB": {
+          "type": "number",
+          "default": 1024,
+          "minimum": 1,
+          "description": "Files larger than this are not scanned or diffed."
+        },
+        "twinlock.commentSyntax": {
+          "type": "object",
+          "default": {},
+          "additionalProperties": {
+            "type": "string"
+          },
+          "markdownDescription": "Comment style used when Twinlock inserts directives, per language id. Use `\"start\"` for line comments or `\"start ... end\"` for block comments, e.g. `{ \"mylang\": \"--\", \"mytemplate\": \"<%# ... %>\" }`."
+        }
+      }
+    },
+    "colors": [
+      {
+        "id": "twinlock.pendingBackground",
+        "description": "Background of a linked block that changed while its linked code did not.",
+        "defaults": {
+          "dark": "#E2A00012",
+          "light": "#E2A00014",
+          "highContrast": null,
+          "highContrastLight": null
+        }
+      },
+      {
+        "id": "twinlock.incomingBackground",
+        "description": "Background of a block that must be updated because linked code changed.",
+        "defaults": {
+          "dark": "#E2700016",
+          "light": "#E2700014",
+          "highContrast": null,
+          "highContrastLight": null
+        }
+      },
+      {
+        "id": "twinlock.pendingRuler",
+        "description": "Overview ruler mark for linked code that needs attention.",
+        "defaults": {
+          "dark": "#E2A000CC",
+          "light": "#C88A00CC",
+          "highContrast": "#FFB000",
+          "highContrastLight": "#A06A00"
+        }
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "twinlock.start",
+        "title": "Get started with Twinlock",
+        "description": "Link code that must change together, and catch drift while you type.",
+        "steps": [
+          {
+            "id": "link",
+            "title": "Link two pieces of code",
+            "description": "Select code, press Ctrl+Alt+L, select its twin anywhere, press it again.\n[Link Selection](command:twinlock.linkSelection)",
+            "media": {
+              "markdown": "media/walkthrough/link.md"
+            },
+            "completionEvents": [
+              "onCommand:twinlock.linkSelection"
+            ]
+          },
+          {
+            "id": "drift",
+            "title": "Change one side",
+            "description": "Edit a linked block and watch both sides light up, even before saving.",
+            "media": {
+              "markdown": "media/walkthrough/drift.md"
+            }
+          },
+          {
+            "id": "view",
+            "title": "Open the Linked Changes view",
+            "description": "See everything that needs attention in the Source Control sidebar.\n[Show Linked Changes](command:twinlock.focus)",
+            "media": {
+              "markdown": "media/walkthrough/view.md"
+            },
+            "completionEvents": [
+              "onView:twinlock.links"
+            ]
+          },
+          {
+            "id": "review",
+            "title": "Review a whole branch",
+            "description": "Compare against origin/main instead of HEAD to check everything your branch changed.\n[Open Setting](command:workbench.action.openSettings?%5B%22twinlock.baseRef%22%5D)",
+            "media": {
+              "markdown": "media/walkthrough/review.md"
+            },
+            "completionEvents": [
+              "onSettingChanged:twinlock.baseRef"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build:prod",
+    "build": "node scripts/build.mjs",
+    "build:prod": "node scripts/build.mjs --production",
+    "watch": "node scripts/build.mjs --watch",
+    "typecheck": "tsc -p . --noEmit",
+    "compile-tests": "tsc -p .",
+    "test:unit": "npm run compile-tests && mocha \"out/test/unit/**/*.test.js\"",
+    "test:integration": "npm run build && npm run compile-tests && node out/test/integration/runTest.js",
+    "test": "npm run test:unit && npm run test:integration",
+    "check:release": "node scripts/check-release.mjs",
+    "package": "npm run check:release && vsce package",
+    "icons": "node scripts/render-icons.mjs",
+    "configure": "node scripts/configure-release.mjs",
+    "publish:marketplace": "npm run check:release && vsce publish"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.19.43",
+    "@types/vscode": "1.85.0",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "mocha": "^10.8.2",
+    "typescript": "^5.9.3"
+  }
+}

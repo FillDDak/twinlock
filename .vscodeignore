@@ -1,0 +1,19 @@
+# Only dist/, media/ (icons) and the docs ship in the VSIX.
+.vscode/**
+.vscode-test/**
+.github/**
+src/**
+out/**
+scripts/**
+node_modules/**
+media/src/**
+media/screenshots/**
+**/*.map
+**/*.ts
+tsconfig.json
+.gitignore
+.gitattributes
+PUBLISHING.md
+CONTRIBUTING.md
+README.ko.md
+**/*.vsix
