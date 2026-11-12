@@ -3,7 +3,7 @@
   "displayName": "Twinlock — Keep Linked Code in Sync",
   "description": "Real-time LINT.IfChange / LINT.ThenChange for VS Code: link code that must change together across files and languages, and see the moment one side drifts.",
   "version": "1.0.0",
-  "publisher": "your-publisher-id",
+  "publisher": "fillddak",
   "license": "MIT",
   "icon": "media/icon.png",
   "galleryBanner": {
