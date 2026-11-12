@@ -2,6 +2,12 @@
 
 All notable changes to Twinlock are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-11-13
+
+### Fixed
+
+- The link to the Korean README (한국어 설명서) now works on the Marketplace page, and a more visible link was added at the top of the README.
+
 ## [1.0.0] - 2026-10-02
 
 ### Added

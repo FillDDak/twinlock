@@ -9,7 +9,7 @@
   VS Code를 위한 실시간 <code>LINT.IfChange</code> / <code>LINT.ThenChange</code>
 </p>
 
-<p align="center"><a href="README.md">English</a> · 한국어</p>
+<p align="center"><a href="https://github.com/FillDDak/twinlock/blob/HEAD/README.md">English</a> · 한국어</p>
 
 <p align="center">
   <img src="media/screenshots/hero.png" alt="config.ts가 바뀌었는데 연결된 settings.py와 uploads.md는 그대로라는 것을 Twinlock이 표시하는 화면" width="100%">
@@ -143,7 +143,7 @@ MAX_UPLOAD_MB = 25
 
 ## 명령어와 설정
 
-명령어 전체 목록과 설정 표는 [영문 README](README.md#commands-and-shortcuts)에 정리되어 있습니다. 자주 쓰는 것만 추리면 다음과 같습니다.
+명령어 전체 목록과 설정 표는 [영문 README](https://github.com/FillDDak/twinlock/blob/HEAD/README.md#commands-and-shortcuts)에 정리되어 있습니다. 자주 쓰는 것만 추리면 다음과 같습니다.
 
 - `Twinlock: Link Selection…` — <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>Alt</kbd>+<kbd>L</kbd>
 - `Twinlock: Acknowledge: No Linked Change Needed`

@@ -13,7 +13,11 @@
   <img alt="VS Code 1.85+" src="https://img.shields.io/badge/VS%20Code-1.85%2B-007ACC?logo=visualstudiocode&logoColor=white">
   <img alt="Languages: any" src="https://img.shields.io/badge/languages-any-5EEAD4">
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-F59E0B">
-  <a href="README.ko.md"><img alt="한국어" src="https://img.shields.io/badge/README-%ED%95%9C%EA%B5%AD%EC%96%B4-lightgrey"></a>
+  <a href="https://github.com/FillDDak/twinlock/blob/HEAD/README.ko.md"><img alt="한국어" src="https://img.shields.io/badge/README-%ED%95%9C%EA%B5%AD%EC%96%B4-lightgrey"></a>
+</p>
+
+<p align="center">
+  🇰🇷 <a href="https://github.com/FillDDak/twinlock/blob/HEAD/README.ko.md"><b>한국어 설명서 보기</b></a>
 </p>
 
 <p align="center">

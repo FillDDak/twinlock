@@ -83,6 +83,11 @@ for (const readme of ['README.md', 'README.ko.md']) {
       continue;
     }
     const file = ref.split('#')[0];
+    // vsce rewrites relative image sources, but not relative links in HTML <a href>:
+    // on the Marketplace those would point at the Marketplace itself.
+    if (readme === 'README.md' && file && /\.md$/i.test(file)) {
+      errors.push(`${readme}: link "${ref}" to another Markdown file breaks on the Marketplace; use the full GitHub URL.`);
+    }
     if (file && !existsSync(join(root, file))) {
       errors.push(`${readme}: link target "${file}" does not exist.`);
     }
